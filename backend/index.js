@@ -7,10 +7,18 @@ const dotenv = require('dotenv');
 const userRoutes = require('./routes/User');
 const uploadRoutes = require('./routes/Upload');
 const categoryRoutes = require('./routes/Category');
+const mainFileUploadRoutes = require('./routes/DriveUpload');
 const CookieParser = require('cookie-parser');
 const fileUpload = require('express-fileupload');
 const { dbConnection } = require('./config/database');
 const cloudinaryConnection = require('./config/cloudinary');
+const { configureGoogleDrive } = require('./config/googleDrive');
+
+configureGoogleDrive().then(drive => {
+  // You can use the 'drive' object here to interact with the Google Drive API
+}).catch(error => {
+  console.error("Failed to configure Google Drive API:", error);
+});
 
 dotenv.config();
 
@@ -36,6 +44,7 @@ app.use(fileUpload({
 app.use("/api/v1/auth", userRoutes);
 app.use("/api/v1/category", categoryRoutes);
 app.use("/api/v1/upload", uploadRoutes);
+app.use("/api/v1/drive-upload", mainFileUploadRoutes);
 app.get('/', (req, res) => {
   res.send('Hello, World!');
 });

@@ -21,7 +21,7 @@ async function uploadFileToDrive(file, folderId = "1NYtXOCFw15O4ZtxHdesIMR3Nkt6U
         const response = await drive.files.create({
             resource: fileMetaData,
             media: {
-                body: fs.createReadStream(file.path),
+                body: fs.createReadStream(file.tempFilePath),
                 mimeType: file.mimetype
             },
             fields: 'id, name, mimeType'

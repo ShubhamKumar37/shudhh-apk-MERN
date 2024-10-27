@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const appMediaSchema = new mongoose.Schema({
-    app: { type: mongoose.Schema.Types.ObjectId, ref: 'App', required: true },
+    // app: { type: mongoose.Schema.Types.ObjectId, ref: 'App', required: true },
     googleDriveFileId: { type: String, required: true }, // Google Drive File ID which is going to be used for CRUD operation
     fileName: { type: String, required: true }, // Name of the file in Google Drive
     fileType: { type: String, required: true }, // MIME type of the file
