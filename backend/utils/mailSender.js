@@ -1,29 +1,32 @@
 const nodemailer = require('nodemailer');
+require("dotenv").config();
 
-async function mailSender(email, body, title) {
-    try {
-        const transporter = nodemailer.createTransport({
-            host: process.env.MAIL_HOST,
-            auth: {
-                user: process.env.MAIL_USER,
-                pass: process.env.MAIL_PASS,
-            }
-        });
+// Working
+const mailSender = async (title, email, body) =>
+    {
+        try{
+            let transporter = nodemailer.createTransport({
+                host: process.env.MAIL_HOST,
+                auth:{
+                    user: process.env.MAIL_USER,
+                    pass: process.env.MAIL_PASS,
+                }
+            });
+            // console.log(transporter.auth);
 
-        const response = await transporter.sendMail({
-            from: process.env.MAIL_USER,
-            to: email,
-            text: body, // Use 'text' or 'html' based on your needs
-            subject: title
-        });
-
-        console.log(`This is the response for sending email to ${email} =====> `, response);
-    } catch (error) {
-        console.log("Error occurred in mailSender function (mailSender.js):", error);
+            let info = await transporter.sendMail({
+                from: `shudhhApk by Shubham Kumar`,
+                to: `${email}`,
+                subject: `${title}`,
+                html: `${body}`,
+            });
+            
+            console.log(info);
+            return info;
+        }
+        catch(Error){
+            console.log(Error);
+        }
     }
-}
 
-// If using CommonJS, export the function
 module.exports = mailSender;
-
-// If using ES modules, you can keep it as is but make sure your environment supports it

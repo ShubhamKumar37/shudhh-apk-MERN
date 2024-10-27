@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const mailSender = require('../utils/mailSender');
-const otpTemplate = require('../template/otpTemplate');
+const {otpTemplate} = require('../template/otpTemplate');
 
 const otpSchema = new mongoose.Schema({
     email: { type: String, required: true },
@@ -13,6 +13,7 @@ const OTP = mongoose.models.OTP || mongoose.model('OTP', otpSchema);
 async function sendVerificationEmail(email, otp) {
     try {
         const mailResponse = await mailSender(otpTemplate(otp), email, otp);
+        console.log("email = ", email, "otp = ", otp);
         return mailResponse;
     } catch (error) {
         console.log("This error occurred in OTP Model ", error);

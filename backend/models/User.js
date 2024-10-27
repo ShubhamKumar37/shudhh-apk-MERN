@@ -4,7 +4,7 @@ const userSchema = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    profilePicture: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Media' }],
+    profilePicture: { type: String},
     token: { type: String },
     publicId: { type: String }, // For Cloudinary image uploads
     totalAppDownload: { type: Number, default: 0 },
@@ -12,7 +12,6 @@ const userSchema = new mongoose.Schema({
     phoneNumber: { type: String, unique: true },
     birthday: { type: Date },
     gender: { type: String, enum: ["Male", "Female"] },
-    resetPasswordToken: { type: String },
     resetPasswordExpiry: { type: Date },
 });
 

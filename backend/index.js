@@ -5,6 +5,8 @@ const port = process.env.PORT || 4000;
 const cors = require('cors');
 const dotenv = require('dotenv');
 const userRoutes = require('./routes/User');
+const uploadRoutes = require('./routes/Upload');
+const categoryRoutes = require('./routes/Category');
 const CookieParser = require('cookie-parser');
 const fileUpload = require('express-fileupload');
 const { dbConnection } = require('./config/database');
@@ -32,6 +34,8 @@ app.use(fileUpload({
 
 // Basic route
 app.use("/api/v1/auth", userRoutes);
+app.use("/api/v1/category", categoryRoutes);
+app.use("/api/v1/upload", uploadRoutes);
 app.get('/', (req, res) => {
   res.send('Hello, World!');
 });
