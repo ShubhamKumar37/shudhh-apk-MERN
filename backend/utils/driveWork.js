@@ -67,7 +67,7 @@ async function deleteFileFromDrive(googleDriveFileId) {
     }
 }
 
-async function updateFileOnDrive(googleDriveFileId, newFile, newName = null) {
+async function updateFileOnDrive(googleDriveFileId, newFile) {
     try {
         console.log("Configuring Google Drive...");
 
@@ -75,16 +75,17 @@ async function updateFileOnDrive(googleDriveFileId, newFile, newName = null) {
 
         const updateOptions = {
             fileId: googleDriveFileId,
-            fields: 'id, name, mimeType'
+            fields: 'id, name, mimeType',
+            resource: {
+                name: newFile.name
+            }
         };
 
-        if (newName) {
-            updateOptions.resource = { name: newName };
-        }
+        console.log("This is the file name ======> ", newFile.name);
 
         if (newFile) {
             updateOptions.media = {
-                body: fs.createReadStream(newFile.path),
+                body: fs.createReadStream(newFile.tempFilePath),
                 mimeType: newFile.mimetype
             };
         }
@@ -97,8 +98,8 @@ async function updateFileOnDrive(googleDriveFileId, newFile, newName = null) {
 
         const updatedFileData = {
             googleDriveFileId: response.data.id,
-            fileName: response.data.name,
-            fileType: response.data.mimeType,
+            fileName: newFile.name,
+            fileType: newFile.mimetype,
             fileUrl: `https://drive.google.com/file/d/${response.data.id}/view`
         };
 
