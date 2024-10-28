@@ -8,6 +8,7 @@ const userRoutes = require('./routes/User');
 const uploadRoutes = require('./routes/Upload');
 const categoryRoutes = require('./routes/Category');
 const mainFileUploadRoutes = require('./routes/DriveUpload');
+const appRoutes = require('./routes/App');
 const CookieParser = require('cookie-parser');
 const fileUpload = require('express-fileupload');
 const { dbConnection } = require('./config/database');
@@ -45,6 +46,7 @@ app.use("/api/v1/auth", userRoutes);
 app.use("/api/v1/category", categoryRoutes);
 app.use("/api/v1/upload", uploadRoutes);
 app.use("/api/v1/drive-upload", mainFileUploadRoutes);
+app.use("/api/v1/app", appRoutes);
 app.get('/', (req, res) => {
   res.send('Hello, World!');
 });
