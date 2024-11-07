@@ -20,7 +20,8 @@ exports.uploadFile = async (req, res) => {
 
         const mediaEntry = new Media({
             url: uploadResponse.secure_url,
-            publicId: uploadResponse.public_id
+            publicId: uploadResponse.public_id,
+            type: file.mimetype.split("/")[0],
         });
 
         await mediaEntry.save();

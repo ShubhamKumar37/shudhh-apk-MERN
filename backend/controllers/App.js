@@ -1,7 +1,9 @@
 const AppMedia = require('../models/AppMedia');
 const Category = require('../models/Category');
 const App = require('../models/App');
-const { uploadToCloudinary } = require('../utils/cloudinaryWork');
+const Media = require('../models/Media');
+const { uploadToCloudinary, deleteFileCloudinary } = require('../utils/cloudinaryWork');
+const {uploadFileToDrive, deleteFileFromDrive} = require("../utils/driveWork");
 
 
 exports.createApp = async (req, res) => {
@@ -15,8 +17,10 @@ exports.createApp = async (req, res) => {
         {
             return res.status(400).json({ success: false, message: "All fields are required" });
         }
+        
 
         const dataOptions = {};
+        console.log(1);
 
         // dataOptions.appName = "Fake App " + Math.random().toString(36).substring(2, 10);
         // dataOptions.appDescription = "This is a fake app for testing purpose only";
@@ -37,28 +41,36 @@ exports.createApp = async (req, res) => {
         if(tag) dataOptions.tag = tag;
         if(size) dataOptions.size = size;
         if(download) dataOptions.download = download;
-        if(releaseDate) dataOptions.releaseDate = releaseDate;
+        if(releaseDate) dataOptions.releaseDate =  new Date(releaseDate);
         if(systemRequirement) dataOptions.systemRequirement = systemRequirement;
         if(language) dataOptions.language = language;
         if(appPermission) dataOptions.appPermission = appPermission;
         if(inAppPurchase) dataOptions.inAppPurchase = inAppPurchase;
         if(searchKeywords) dataOptions.searchKeywords = searchKeywords;
 
+
         const newApp = await App.create(dataOptions);
 
         const categoryExist = await Category.findById(category);
-        
+        if(!categoryExist)
+        {
+            return res.status(400).json({ success: false, message: "Category not found" });
+        }
+
         const appIconResponse = await uploadToCloudinary(appIcon, "media", 90);
-        const appIconData = await AppMedia.create({
-            secure_url: appIconResponse.secure_url,
+        const appIconData = await Media.create({
+            url: appIconResponse.secure_url,
             publicId: appIconResponse.public_id,
+            type: appIcon.mimetype.split("/")[0],
         });
-        
+
         for (const item of appMedia) {
+            console.log("This is item = ", item);
             const appMediaResponse = await uploadToCloudinary(item, "media", 90);
-            const tempAppRes = await AppMedia.create({
-                secure_url: appMediaResponse.secure_url,
+            const tempAppRes = await Media.create({
+                url: appMediaResponse.secure_url,
                 publicId: appMediaResponse.public_id,
+                type: item.mimetype.split("/")[0],
             });
 
             newApp.media.push(tempAppRes._id);
@@ -70,7 +82,7 @@ exports.createApp = async (req, res) => {
             googleDriveFileId: fileData.googleDriveFileId,
             fileName: fileData.fileName,
             fileType: fileData.fileType,
-            fileSize: file?.size,
+            fileSize: appFile?.size,
             fileUrl: fileData.fileUrl
         });
         
@@ -78,6 +90,15 @@ exports.createApp = async (req, res) => {
         newApp.category = categoryExist._id;
         newApp.appIcon = appIconData._id;
         newApp.appFile = newAppFile._id;
+
+
+        const savedApp = await newApp.save({ new: true });
+        const populatedApp = await App.findById(savedApp._id)
+            .populate('category')  
+            .populate('appIcon')    
+            .populate('media')      
+            .exec();
+        return res.status(200).json({ success: true, message: "App created successfully", data: populatedApp });
         
     }
     catch(error)
@@ -90,7 +111,40 @@ exports.createApp = async (req, res) => {
 exports.deleteApp = async (req, res) => {
     try
     {
+        const {appId} = req.body;
 
+        if(!appId)
+        {
+            return res.status(400).json({ success: false, message: "App id is required" });
+        }
+
+        const appExist = await App.findById(appId);
+        if(!appExist)
+        {
+            return res.status(404).json({ success: false, message: "App not found" });
+        }
+
+        const appFileDelete = await AppMedia.findByIdAndDelete(appExist.appFile);
+        if(!appFileDelete) return res.status(404).json({ success: false, message: "App file not found" });
+        const deleteFileResponse = await deleteFileFromDrive(appFileDelete.googleDriveFileId);
+        console.log("Delete file response:", deleteFileResponse);
+
+        const appIconDelete = await Media.findByIdAndDelete(appExist.appIcon);
+        if(!appIconDelete) return res.status(404).json({ success: false, message: "App icon not found" });
+        const deleteIconResponse = await deleteFileCloudinary(appIconDelete.publicId, appIconDelete.type);
+        console.log("Delete icon response:", deleteIconResponse);
+
+        for(let item of appExist.media)
+        {
+            const mediaDelete = await Media.findByIdAndDelete(item);
+            if(!mediaDelete) return res.status(404).json({ success: false, message: "App media not found" });
+            const deleteMediaResponse = await deleteFileCloudinary(mediaDelete.publicId, mediaDelete.type);
+            console.log("Delete media response:", deleteMediaResponse);
+        }
+
+        const appDelete = await App.findByIdAndDelete(appId);
+
+        return res.status(200).json({ success: true, message: "App deleted successfully", data: appDelete });
     }
     catch(error)
     {
@@ -115,7 +169,9 @@ exports.getAllApp = async (req, res) =>
 {
     try
     {
+        const allApps = await App.find({}).populate('category').populate('appIcon').populate('media');
 
+        return res.status(200).json({ success: true, message: "App fetched successfully", data: allApps });
     }
     catch(error)
     {
@@ -128,7 +184,20 @@ exports.getSingleApp = async (req, res) =>
 {
     try
     {
+        const {appId} = req.body || req.params;
 
+        if(!appId)
+        {
+            return res.status(400).json({ success: false, message: "App id is required" });
+        }
+
+        const appExist = await App.findById(appId)?.populate('category')?.populate('appIcon')?.populate('media');
+        if(!appExist)
+        {
+            return res.status(404).json({ success: false, message: "App not found" });
+        }
+
+        return res.status(200).json({ success: true, message: "App fetched successfully", data: appExist });
     }
     catch(error)
     {
