@@ -1,1 +1,76 @@
 backend/config/credentials.json
+# Ignore node_modules folder
+/node_modules/
+
+# Ignore log files
+logs
+*.log
+
+# Ignore env file
+.env
+
+# Ignore keys
+*.pem
+*.key
+
+# Ignore coverage folder
+coverage
+
+# Ignore firebase service account file
+firebase-service-account.json
+
+# Ignore build folder
+build
+
+# Ignore cache folder
+cache
+
+# Ignore tmp folder
+tmp
+
+# Ignore local dev databases
+dev.db
+dev.db-journal
+
+# Ignore local mongodb data files
+data
+
+# Ignore local storage for serverless functions
+serverless
+
+# Ignore local storage for serverless functions
+.serverless
+
+# Ignore local storage for serverless functions
+.faunadb
+
+# Ignore local storage for serverless functions
+.firebase
+
+# Ignore local storage for serverless functions
+.gcp-service-account.json
+
+# Ignore local storage for serverless functions
+.google-credentials.json
+
+# Ignore local storage for serverless functions
+.kubeconfig
+
+# Ignore local storage for serverless functions
+.serverless
+
+# Ignore local storage for serverless functions
+.faunadb
+
+# Ignore local storage for serverless functions
+.firebase
+
+# Ignore local storage for serverless functions
+.gcp-service-account.json
+
+# Ignore local storage for serverless functions
+.google-credentials.json
+
+# Ignore local storage for serverless functions
+.kubeconfig
+

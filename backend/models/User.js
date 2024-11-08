@@ -6,10 +6,10 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: true },
     profilePicture: { type: String},
     token: { type: String },
-    publicId: { type: String }, // For Cloudinary image uploads
+    publicId: { type: String },
     totalAppDownload: { type: Number, default: 0 },
     role: { type: String, enum: ["User", "Admin"], default: "User" },
-    phoneNumber: { type: String, unique: true },
+    phoneNumber: { type: String},
     birthday: { type: Date },
     gender: { type: String, enum: ["Male", "Female"] },
     resetPasswordExpiry: { type: Date },

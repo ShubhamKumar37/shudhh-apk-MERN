@@ -10,7 +10,7 @@ const appSchema = new mongoose.Schema({
     size: { type: String },
     category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
     download: { type: Number, default: 0 },
-    releaseDate: { type: Date },
+    releaseDate: { type: String },
     systemRequirement: { type: String },
     language: [{ type: String }],
     comment: [{ type: mongoose.Schema.Types.ObjectId, ref: 'CommentReview' }],

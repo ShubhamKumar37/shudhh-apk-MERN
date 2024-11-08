@@ -46,3 +46,20 @@ exports.createCategories = async (req, res) => {
     }
 };
 
+exports.getAllCategories = async (req, res) => {
+    try {
+        const categories = await Category.find();
+        return res.status(200).json({
+            success: true,
+            message: "Categories fetched successfully",
+            data: categories
+        });
+    } catch (error) {
+        console.error("Error while getting categories:", error);
+        return res.status(500).json({
+            success: false,
+            message: error.message,
+            additionalInfo: "Error while getting categories"
+        });
+    }
+};
