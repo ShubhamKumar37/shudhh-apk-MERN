@@ -22,11 +22,11 @@ const Signup = () => {
             return;
         }
 
+        console.log("Signup Data: ", data);
         sendOTP(data.email);
         
-        console.log("Signup Data: ", data);
-        dispatch(setSignupData(data));
-        navigate("/otp");
+        // dispatch(setSignupData(data));
+        // navigate("/otp");
     };
 
     return (

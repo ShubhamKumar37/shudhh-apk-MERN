@@ -1,21 +1,31 @@
 // src/components/Navbar.js
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { logout } from '../../services/operations/authAPI';
 
 const Navbar = () => {
 
-    const token = useSelector((state) => state.auth.token);
+    const {token, userData} = useSelector((state) => state.auth);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    console.log("This is user: ", userData);
+
 
     return (
-        <nav className="bg-blue-600 p-4 flex justify-between items-center">
+        <nav className="bg-blue-600 py-3 px-[3rem] flex justify-between items-center">
             <Link to="/" className="text-white font-bold text-xl">App Store</Link>
-            <div>
-                {token && <Link to="/dashboard" className="text-white px-4 py-2 mr-2 bg-blue-700 rounded">
+            <div className='flex gap-5 items-center'>
+                {token &&
+                    <button className="text-white px-4 py-2 mr-2 bg-blue-700 rounded" onClick={() => dispatch(logout(navigate))}>Logout</button>
+                }
+                {token &&
+                    <Link to="/dashboard" className="text-white  rounded">
                         <div>
-                        
-                    </div>
-                </Link>}
+                            <img src={userData?.profilePicture} alt="Avatar" className="w-12 h-12 border-2 border-blue-700  rounded-full"/>
+                        </div>
+                    </Link>
+                }
 
                 {!token && <Link to="/login" className="text-white px-4 py-2 mr-2 bg-blue-700 rounded">Login</Link>}
                 {!token && <Link to="/signup" className="text-white px-4 py-2 bg-blue-700 rounded">Sign Up</Link>}

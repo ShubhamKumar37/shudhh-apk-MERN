@@ -1,14 +1,19 @@
 // src/pages/Login.js
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Input from '../components/Input';
+import { useDispatch } from 'react-redux';
+import { login } from '../services/operations/authAPI';
 
 const Login = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
-
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const onSubmit = (data) => {
         console.log("Login Data: ", data);
+        dispatch(login(data, navigate));
+
     };
 
     return (
