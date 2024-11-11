@@ -1,8 +1,9 @@
 import { setLoading, setSignupData, setToken, setUserData } from "../../slices/authSlice";
 import { apiConnector } from "../apiConnector";
 import { userAuth } from "../apis";
+import toast from "react-hot-toast";
 
-const {SIGNUP_USER, SEND_OTP_USER, LOGIN_USER} = userAuth;
+const {SIGNUP_USER, SEND_OTP_USER, LOGIN_USER, RESET_PASSWORD_TOKEN_USER} = userAuth;
 
 
 export function signup({name, email, password, confirmPassword, otp}, navigate)
@@ -50,7 +51,9 @@ export async function sendOTP(email)
     }
     catch(error)
     {
+        toast.error("User already exist try login");
         console.log("Error: ", error);
+        return error;
     }
 }
 
@@ -63,6 +66,7 @@ export function login({email, password}, navigate)
             setLoading(true);
             console.log("Yaha bhi aya hun");
             const response = await apiConnector("PUT", LOGIN_USER, { email, password });
+            if(response.data.success === true) toast.success(response.data.message);
             console.log("This is user login response: ", response.data);
             console.log("This is user login response: ", response.data.token);
 
@@ -95,10 +99,33 @@ export function logout(navigate)
             dispatch(setUserData(null));
             dispatch(setLoading(false));
             navigate("/");
+            toast.success("Logout successfully");
         }
         catch(Error)
         {
             console.log("Error: ", Error);
+        }
+    }
+}
+
+export function resetPasswordToken(email)
+{
+    return async(dispatch) =>
+    {
+        try
+        {
+            dispatch(setLoading(true));
+            const response = await apiConnector("PUT", RESET_PASSWORD_TOKEN_USER, { email });   
+            toast.success("Reset link sent to your email");
+            dispatch(setLoading(false));
+            console.log("This is resetPasswordToken response: ", response);
+            return response;
+        }
+        catch(error)
+        {
+            toast.error("User doesnot exist");
+            console.log("Error: ", error);
+            return error;
         }
     }
 }

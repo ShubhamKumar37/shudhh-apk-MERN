@@ -23,10 +23,14 @@ const Signup = () => {
         }
 
         console.log("Signup Data: ", data);
-        sendOTP(data.email);
-        
-        // dispatch(setSignupData(data));
-        // navigate("/otp");
+        const response = await sendOTP(data.email);
+        if(response.status === 401){
+            navigate('/');
+            return ;
+        }
+        console.log(response);
+        dispatch(setSignupData(data));
+        navigate("/otp");
     };
 
     return (

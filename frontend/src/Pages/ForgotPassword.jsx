@@ -2,12 +2,18 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import Input from '../components/Input';
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { resetPasswordToken } from '../services/operations/authAPI';
 
 const ForgotPassword = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
-
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
     const onSubmit = (data) => {
-        console.log("Forgot Password Data: ", data);
+        
+        const response = dispatch(resetPasswordToken(data.email));
     };
 
     return (

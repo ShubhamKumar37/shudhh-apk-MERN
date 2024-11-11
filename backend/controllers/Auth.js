@@ -232,7 +232,7 @@ exports.resetPasswordToken = async (req, res) => {
         const token = crypto.randomUUID();
 
         const updatedDetails = await User.findOneAndUpdate({ email: email },
-            { token: token, resetPasswordExpires: Date.now() + 5 * 60 * 1000 }, { new: true }
+            { token: token, resetPasswordExpires: Date.now() + 20 * 60 * 1000 }, { new: true }
         );
 
         // Create URL for reset Password
@@ -311,12 +311,12 @@ exports.resetPassword = async (req, res) => {
         );
 
         // Send a mail of confirm changed password
-        await mailSender("Your password successfully changed", updatedUser.email, "<h1>Your password is changed</h1>")
+        // await mailSender("Your password successfully changed", updatedUser.email, "<h1>Your password is changed</h1>")
 
         return res.status(200).json(
             {
                 success: true,
-                message: "Password resetted successfully",
+                message: "Password updated successfully",
                 data: updatedUser
             }
         );
