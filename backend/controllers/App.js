@@ -12,6 +12,9 @@ exports.createApp = async (req, res) => {
 
         const { appFile, appIcon, appMedia } = req.files;
 
+        console.log("This is req.files = ", req.files);
+        console.log("This is req.body = ", req.body);
+
         if (!appName || !category || !tag || !releaseDate || !appPermission || !appFile || !appIcon || !appMedia) {
             return res.status(400).json({ success: false, message: "All fields are required" });
         }
@@ -47,13 +50,24 @@ exports.createApp = async (req, res) => {
             type: appIcon.mimetype.split("/")[0],
         });
 
-        for (const item of appMedia) {
-            console.log("This is item = ", item);
-            const appMediaResponse = await uploadToCloudinary(item, "media", 90);
+        if (Array.isArray(appMedia)) {
+            for (const item of appMedia) {
+                console.log("This is item = ", item);
+                const appMediaResponse = await uploadToCloudinary(item, "media", 90);
+                const tempAppRes = await Media.create({
+                    url: appMediaResponse.secure_url,
+                    publicId: appMediaResponse.public_id,
+                    type: item.mimetype.split("/")[0],
+                });
+
+                newApp.media.push(tempAppRes._id);
+            }
+        } else {
+            const appMediaResponse = await uploadToCloudinary(appMedia, "media", 90);
             const tempAppRes = await Media.create({
                 url: appMediaResponse.secure_url,
                 publicId: appMediaResponse.public_id,
-                type: item.mimetype.split("/")[0],
+                type: appMedia.mimetype.split("/")[0],
             });
 
             newApp.media.push(tempAppRes._id);
@@ -217,7 +231,7 @@ exports.getAllApp = async (req, res) => {
 
 exports.getSingleApp = async (req, res) => {
     try {
-        const { appId } = req.body || req.params;
+        const { appId } = req.body;
 
         if (!appId) {
             return res.status(400).json({ success: false, message: "App id is required" });

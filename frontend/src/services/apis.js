@@ -1,10 +1,10 @@
 const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:4000/api/v1";
 
 // APP AREA OF APIS ENDPOINT
-export const app = {
+export const appApi = {
     CREATE_APP: BASE_URL + "/app/create-app",
     GET_ALL_APPS: BASE_URL + "/app/get-all-apps",
-    GET_SINGLE_APP: BASE_URL + "/app/get-app",
+    GET_SINGLE_APP: BASE_URL + "/app/get-app/:id",
     DELETE_APP: BASE_URL + "/app/delete-app",
     UPDATE_APP: BASE_URL + "/app/update-app",
     UPDATE_MAIN_FILE: BASE_URL + "/app/update-file",

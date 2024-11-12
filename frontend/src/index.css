@@ -8,6 +8,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: rgb(1, 110, 143);
 }
 
 code {
@@ -17,5 +18,5 @@ code {
 
 .otp-separator {
   margin: 0 8px;
-  color: #4B5563; /* Gray color */
+  color: #4B5563; 
 }

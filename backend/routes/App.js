@@ -7,7 +7,7 @@ const {updateMainFile} = require("../controllers/DriveUpload");
 
 router.post("/create-app", auth, createApp);
 router.get("/get-all-apps", getAllApp);
-router.get("/get-app/:appId", getSingleApp);
+router.get("/get-app", getSingleApp);
 router.delete("/delete-app", deleteApp);
 router.put("/update-app/:appId", auth, updateApp);
 router.put("/update-file", auth, updateMainFile);
