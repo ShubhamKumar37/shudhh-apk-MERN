@@ -6,7 +6,8 @@ import { logout } from '../../services/operations/authAPI';
 
 const Navbar = () => {
 
-    const {token, userData} = useSelector((state) => state.auth);
+    const token = useSelector((state) => state.auth.token) || JSON.parse(localStorage.getItem("token"));
+    const userData = useSelector((state) => state.auth.userData) || JSON.parse(localStorage.getItem("userData"));
     const dispatch = useDispatch();
     const navigate = useNavigate();
     console.log("This is user: ", userData);

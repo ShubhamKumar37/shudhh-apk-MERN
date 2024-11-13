@@ -1,12 +1,13 @@
 // src/components/Input.js
 import React from 'react';
 
-const Input = ({ label, name, type = "text", register, required, errors }) => {
+const Input = ({ label, name, type = "text", register, required, errors, placeholder }) => {
     return (
         <div className="mb-4">
             <label className="block text-gray-700 font-semibold mb-2">{label}</label>
             <input
                 type={type}
+                placeholder={placeholder || ""}
                 {...register(name, { required })}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300"
             />

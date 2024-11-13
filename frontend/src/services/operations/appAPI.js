@@ -13,7 +13,6 @@ export function getAllApp(){
             return response;
         } catch (error) {
             console.log("Error in getting all App: ", error);
-            return error;
         }
     }
 }

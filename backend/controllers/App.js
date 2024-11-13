@@ -4,11 +4,13 @@ const App = require('../models/App');
 const Media = require('../models/Media');
 const { uploadToCloudinary, deleteFileCloudinary, updateFileCloudinary } = require('../utils/cloudinaryWork');
 const { uploadFileToDrive, deleteFileFromDrive, updateFileOnDrive } = require("../utils/driveWork");
+const User = require('../models/User');
 
 
 exports.createApp = async (req, res) => {
     try {
         const { appName, appDescription, companyName, category, tag, size, download, releaseDate, systemRequirement, language, appPermission, inAppPurchase, searchKeywords } = req.body;
+        const userId = req.user.id;
 
         const { appFile, appIcon, appMedia } = req.files;
 
@@ -34,9 +36,11 @@ exports.createApp = async (req, res) => {
         if (appPermission) dataOptions.appPermission = appPermission;
         if (inAppPurchase) dataOptions.inAppPurchase = inAppPurchase;
         if (searchKeywords) dataOptions.searchKeywords = searchKeywords;
+        dataOptions.providedBy = userId;
 
 
         const newApp = await App.create(dataOptions);
+        const userData = await User.findByIdAndUpdate(userId, { $push: { apps: newApp._id } }, { new: true });
 
         const categoryExist = await Category.findById(category);
         if (!categoryExist) {
@@ -95,6 +99,7 @@ exports.createApp = async (req, res) => {
             .populate('appIcon')
             .populate('media')
             .exec();
+        populatedApp.providedBy = userData;
         return res.status(200).json({ success: true, message: "App created successfully", data: populatedApp });
 
     }
@@ -107,6 +112,7 @@ exports.createApp = async (req, res) => {
 exports.deleteApp = async (req, res) => {
     try {
         const { appId } = req.body;
+        const userId = req.user.id;
 
         if (!appId) {
             return res.status(400).json({ success: false, message: "App id is required" });
@@ -135,6 +141,9 @@ exports.deleteApp = async (req, res) => {
         }
 
         const appDelete = await App.findByIdAndDelete(appId);
+        const userData = await User.findByIdAndUpdate(userId, { $pull: { apps: appId } }, { new: true });
+
+        appDelete.providedBy = userData;
 
         return res.status(200).json({ success: true, message: "App deleted successfully", data: appDelete });
     }
