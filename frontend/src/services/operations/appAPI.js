@@ -1,4 +1,4 @@
-import { setAppData } from "../../slices/appSlice";
+import { setAppData, setSingleAppData } from "../../slices/appSlice";
 import { apiConnector } from "../apiConnector";
 import { appApi } from "../apis";
 
@@ -18,19 +18,16 @@ export function getAllApp(){
     }
 }
 
-export function getApp(id)
-{
-    return async(dispatch) => {
-        try 
-        {
-            const response = await apiConnector("GET", GET_SINGLE_APP, {appId: id});
+export function getApp(appId) {
+    return async (dispatch) => {
+        try {
+            const response = await apiConnector("GET", `${GET_SINGLE_APP}/${appId}`);
             console.log("This is response: ", response.data.data);
-            return response;
-        }
-        catch(error)
-        {
-            console.log("Error in getting all App: ", error);
+            dispatch(setSingleAppData(response.data.data));
+            return response.data.data;
+        } catch (error) {
+            console.log("Error in getting an App: ", error.response.data);
             return error;
         }
-    }
+    };
 }

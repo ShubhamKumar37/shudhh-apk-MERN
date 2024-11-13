@@ -33,7 +33,8 @@ async function uploadFileToDrive(file, folderId = "1NYtXOCFw15O4ZtxHdesIMR3Nkt6U
             googleDriveFileId: response.data.id,
             fileName: response.data.name,
             fileType: response.data.mimeType,
-            fileUrl: `https://drive.google.com/file/d/${response.data.id}/view`
+            fileUrl: `https://drive.google.com/file/d/${response.data.id}/view`,
+            // fileUrl: `https://drive.google.com/uc?export=download&id=${response.data.id}`
         };
 
         console.log("File uploaded successfully:", fileData);

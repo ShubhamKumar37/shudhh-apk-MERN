@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema({
     birthday: { type: Date },
     gender: { type: String, enum: ["Male", "Female"] },
     resetPasswordExpiry: { type: Date },
+    appProvided: [{ type: mongoose.Schema.Types.ObjectId, ref: 'App' }],
 });
 
 module.exports = mongoose.models.User || mongoose.model('User', userSchema);

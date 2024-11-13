@@ -231,21 +231,26 @@ exports.getAllApp = async (req, res) => {
 
 exports.getSingleApp = async (req, res) => {
     try {
-        const { appId } = req.body;
+        const { appId } = req.params;
+        console.log("This is appId: ", appId);
 
         if (!appId) {
             return res.status(400).json({ success: false, message: "App id is required" });
         }
 
-        const appExist = await App.findById(appId)?.populate('category')?.populate('appIcon')?.populate('media');
+        const appExist = await App.findById(appId)
+            .populate('category')
+            .populate('appIcon')
+            .populate('appFile')
+            .populate('media');
+
         if (!appExist) {
             return res.status(404).json({ success: false, message: "App not found" });
         }
 
         return res.status(200).json({ success: true, message: "App fetched successfully", data: appExist });
-    }
-    catch (error) {
+    } catch (error) {
         console.log("Error in getting single App: ", error);
         return res.status(500).json({ success: false, message: error.message, additionalInfo: "Error in getting single App" });
     }
-}
+};

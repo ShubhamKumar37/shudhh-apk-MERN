@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     appData: [null],
+    singleAppData: null,
 };
 
 const appSlice = createSlice({
@@ -11,8 +12,11 @@ const appSlice = createSlice({
         setAppData: (state, action) => {
             state.appData = action.payload;
         },
+        setSingleAppData: (state, action) => {
+            state.singleAppData = action.payload;
+        },
     },
 });
 
-export const { setAppData } = appSlice.actions;
+export const { setAppData, setSingleAppData } = appSlice.actions;
 export default appSlice.reducer;

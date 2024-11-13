@@ -18,6 +18,7 @@ const appSchema = new mongoose.Schema({
     inAppPurchase: { type: Boolean, default: false },
     media: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Media' }],
     searchKeywords: [{ type: String, default: [this.appName] }], // Keywords for search optimization
+    providedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 });
 
 module.exports = mongoose.models.App || mongoose.model('App', appSchema);
