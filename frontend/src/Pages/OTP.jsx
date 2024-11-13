@@ -15,7 +15,7 @@ const OTP = () => {
         setOtp(otpValue);
     };
 
-    const  handleSubmit = () => {
+    const handleSubmit = () => {
         if (otp.length === 6) {
             console.log(`OTP entered: ${otp}`);
         } else {
@@ -34,9 +34,9 @@ const OTP = () => {
     };
 
     return (
-        <div className="flex justify-center items-center min-h-screen bg-gray-100">
-            <div className="bg-white p-6 rounded-lg shadow-md w-96">
-                <h2 className="text-2xl font-bold mb-4 text-center">Enter OTP</h2>
+        <div className="flex justify-center items-center min-h-screen bg-gray-50">
+            <div className="bg-white p-8 rounded-lg shadow-lg w-96">
+                <h2 className="text-2xl font-semibold text-blue-600 mb-6 text-center">Enter OTP</h2>
 
                 <OtpInput
                     value={otp}
@@ -53,15 +53,15 @@ const OTP = () => {
                     )}
                 />
 
-
                 <button
                     onClick={handleSubmit}
-                    className="w-full bg-blue-600 text-white p-2 rounded-lg mt-4 hover:bg-blue-700 transition duration-300"
+                    className="w-full bg-blue-600 text-white p-3 rounded-lg mt-6 hover:bg-blue-700 transition duration-200"
                 >
                     Submit
                 </button>
             </div>
         </div>
+
     );
 };
 

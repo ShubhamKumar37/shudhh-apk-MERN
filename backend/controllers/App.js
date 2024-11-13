@@ -42,7 +42,7 @@ exports.createApp = async (req, res) => {
         const newApp = await App.create(dataOptions);
         const userData = await User.findByIdAndUpdate(userId, { $push: { apps: newApp._id } }, { new: true });
 
-        const categoryExist = await Category.findById(category);
+        const categoryExist = await Category.findById({_id: category});
         if (!categoryExist) {
             return res.status(400).json({ success: false, message: "Category not found" });
         }

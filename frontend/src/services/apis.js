@@ -12,7 +12,7 @@ export const appApi = {
 };
 
 // CATEGORY AREA OF APIS ENDPOINT
-export const category = {
+export const categoryApi = {
     CREATE_CATEGORY: BASE_URL + "/category/create-categories",
     GET_ALL_CATEGORIES: BASE_URL + "/category/get-all-categories",
 };

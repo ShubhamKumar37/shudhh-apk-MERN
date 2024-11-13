@@ -21,32 +21,34 @@ const Home = () => {
   }, [dispatch]);
 
   return (
-    <div className='p-4'>
+    <div className="p-6">
+      {token && (
+        <button
+          onClick={() => navigate("/add-app")}
+          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-md mt-6 w-full transition duration-200"
+        >
+          Add App
+        </button>
+      )}
       {isLoading ? (
-        <p>Loading data, please wait...</p>
+        <p className="text-center text-lg text-gray-600">Loading data, please wait...</p>
       ) : (
-        (appData && appData.length > 0) ? (
-          <div className='grid grid-cols-1 sm:grid-cols-2  gap-4'>
-            {appData.map((app) => (
-              <Card key={app._id} app={app} />
-            ))}
-          </div>
-        ) : (
-          <p>No data available.</p>
-        )
+        <div className='mt-5'>
+          <p className='text-center text-2xl my-4 text-gray-800 font-bold'>Feel free to add your own app and make available for others</p>
+          {(appData && appData.length > 0) ? (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-[5rem]">
+              {appData.map((app) => (
+                <Card key={app._id} app={app} />
+              ))}
+            </div>
+          ) : (
+            <p className="text-center text-lg text-gray-600">No data available.</p>
+          )}
+        </div>
       )}
 
-      {
-        token && (
-          <button
-            onClick={() => navigate("/add-app")}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
-          >
-            Add App
-          </button>
-        )
-      }
     </div>
+
   );
 }
 
