@@ -1,5 +1,6 @@
 const AppMedia = require('../models/AppMedia');
 const Category = require('../models/Category');
+const User = require('../models/User');
 const App = require('../models/App');
 const Media = require('../models/Media');
 const { uploadToCloudinary, deleteFileCloudinary, updateFileCloudinary } = require('../utils/cloudinaryWork');
@@ -113,6 +114,9 @@ exports.deleteApp = async (req, res) => {
     try {
         const { appId } = req.body;
         const userId = req.user.id;
+
+        const deleteFromUser = await User.findByIdAndUpdate(userId, { $pull: { apps: appId } }, { new: true });
+        console.log(deleteFromUser);
 
         if (!appId) {
             return res.status(400).json({ success: false, message: "App id is required" });
