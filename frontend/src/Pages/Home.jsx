@@ -17,6 +17,7 @@ const Home = () => {
     console.log("Fetching app data...");
     dispatch(getAllApp())
       .finally(() => setIsLoading(false));
+    console.log("App data fetched.", appData);  
   }, [dispatch]);
 
   return (

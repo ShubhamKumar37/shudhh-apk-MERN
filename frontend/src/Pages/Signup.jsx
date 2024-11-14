@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { setSignupData } from '../slices/authSlice';
 import { sendOTP } from '../services/operations/authAPI';
 import { useDispatch } from 'react-redux';
+import toast from 'react-hot-toast';
 
 const Signup = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();

@@ -32,8 +32,8 @@ const Navbar = () => {
                     <Link to="/dashboard" className="text-white rounded hover:bg-blue-700 p-2 transition duration-300">
                         <div>
                             <img
-                                src={userData?.profilePicture}
-                                alt="Avatar"
+                                src={userData?.profilePicture?.url || `https://api.dicebear.com/5.x/initials/svg?seed=${userData?.name}`}
+                                alt="User Profile"
                                 className="w-12 h-12 border-2 border-blue-700 rounded-full"
                             />
                         </div>

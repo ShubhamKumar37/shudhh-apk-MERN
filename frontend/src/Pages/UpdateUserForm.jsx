@@ -11,7 +11,7 @@ import { setUserData } from '../slices/authSlice';
 
 const UpdateUserForm = () => {
     const { userData } = useSelector((state) => state.auth);
-    const {UPDATE_USER} = userAuth;
+    const { UPDATE_USER } = userAuth;
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -26,27 +26,36 @@ const UpdateUserForm = () => {
 
     const onFormSubmit = async (data) => {
         const formData = new FormData();
-
+        
+        // Append all non-empty fields to formData
         Object.entries(data).forEach(([key, value]) => {
             if (value && value.toString().trim() !== '') {
                 formData.append(key, typeof value === 'string' ? value.trim() : value);
             }
         });
 
-        formData.append("publicId", userData.publicId);
-        console.log("data", data);
-        data.publicId = userData.publicId;
+        // Add publicId and profilePicture
+        if (userData?.profilePicture?.public_id) {
+            formData.append("publicId", userData.profilePicture.public_id);
+        }
+        if (data.profilePicture && data.profilePicture.length) {
+            formData.append("profilePicture", data.profilePicture[0]);
+        }
         
-        try
-        {
-            
-                    for (var pair of formData.entries()) {
-                        console.log(pair[0] + ':', pair[1]);
-                    }
-            
+        console.log("FormData entries:");
+        for (let [key, value] of formData.entries()) {
+            console.log(key, ':', value);
+        }
+
+        try {
+
+            for (var pair of formData.entries()) {
+                console.log(pair[0] + ':', pair[1]);
+            }
+
             toast.loading("Updating profile...");
-            const response = await apiConnector("PUT", UPDATE_USER, data);
-            console.log("This is response: of updated file", response.data.data);
+            const response = await apiConnector("PUT", UPDATE_USER, formData);
+            console.log("This is response: of updated file", response.data);
             if (response.data.success) {
                 toast.dismiss();
             } else {
@@ -57,12 +66,12 @@ const UpdateUserForm = () => {
             dispatch(setUserData(response.data.data));
             localStorage.setItem("userData", JSON.stringify(response.data.data));
             // navigate("/");
-            
+
 
         }
         catch (error) {
             toast.dismiss();
-            toast.error("Something went wrong, profile is not updated" );
+            toast.error("Something went wrong, profile is not updated");
             console.log("Error in updating user: ", error);
         }
         console.log("This is the data ", formData);
@@ -103,13 +112,13 @@ const UpdateUserForm = () => {
                             placeholder="Enter your address"
                         />
 
-                        {/* <FileInput
+                        <FileInput
                             label="Profile Picture"
                             name="profilePicture"
                             register={register}
                             required={false}
                             errors={errors}
-                        /> */}
+                        />
 
                         <div className="mt-6">
                             <button

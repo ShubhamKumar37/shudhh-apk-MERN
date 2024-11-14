@@ -3,9 +3,9 @@ import OtpInput from 'react-otp-input';
 import { useDispatch, useSelector } from 'react-redux';
 import { signup } from '../services/operations/authAPI';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 const OTP = () => {
-
     let userData = useSelector((state) => state.auth.signupData);
     const navigate = useNavigate();
     const dispatch = useDispatch();

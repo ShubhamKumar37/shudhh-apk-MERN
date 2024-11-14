@@ -5,7 +5,6 @@ const App = require('../models/App');
 const Media = require('../models/Media');
 const { uploadToCloudinary, deleteFileCloudinary, updateFileCloudinary } = require('../utils/cloudinaryWork');
 const { uploadFileToDrive, deleteFileFromDrive, updateFileOnDrive } = require("../utils/driveWork");
-const User = require('../models/User');
 
 
 exports.createApp = async (req, res) => {
@@ -17,6 +16,7 @@ exports.createApp = async (req, res) => {
 
         console.log("This is req.files = ", req.files);
         console.log("This is req.body = ", req.body);
+        console.log("This is appFile = ", appFile);
 
         if (!appName || !category || !tag || !releaseDate || !appPermission || !appFile || !appIcon || !appMedia) {
             return res.status(400).json({ success: false, message: "All fields are required" });
@@ -43,7 +43,7 @@ exports.createApp = async (req, res) => {
         const newApp = await App.create(dataOptions);
         const userData = await User.findByIdAndUpdate(userId, { $push: { apps: newApp._id } }, { new: true });
 
-        const categoryExist = await Category.findById({_id: category});
+        const categoryExist = await Category.findById({ _id: category });
         if (!categoryExist) {
             return res.status(400).json({ success: false, message: "Category not found" });
         }
@@ -115,39 +115,55 @@ exports.deleteApp = async (req, res) => {
         const { appId } = req.body;
         const userId = req.user.id;
 
-        const deleteFromUser = await User.findByIdAndUpdate(userId, { $pull: { apps: appId } }, { new: true });
-        console.log(deleteFromUser);
-
         if (!appId) {
             return res.status(400).json({ success: false, message: "App id is required" });
         }
 
+        // Ensure the app exists and is owned by the user
         const appExist = await App.findById(appId);
         if (!appExist) {
             return res.status(404).json({ success: false, message: "App not found" });
         }
 
+        // Delete app file from drive
         const appFileDelete = await AppMedia.findByIdAndDelete(appExist.appFile);
-        if (!appFileDelete) return res.status(404).json({ success: false, message: "App file not found" });
-        const deleteFileResponse = await deleteFileFromDrive(appFileDelete.googleDriveFileId);
-        console.log("Delete file response:", deleteFileResponse);
-
-        const appIconDelete = await Media.findByIdAndDelete(appExist.appIcon);
-        if (!appIconDelete) return res.status(404).json({ success: false, message: "App icon not found" });
-        const deleteIconResponse = await deleteFileCloudinary(appIconDelete.publicId, appIconDelete.type);
-        console.log("Delete icon response:", deleteIconResponse);
-
-        for (let item of appExist.media) {
-            const mediaDelete = await Media.findByIdAndDelete(item);
-            if (!mediaDelete) return res.status(404).json({ success: false, message: "App media not found" });
-            const deleteMediaResponse = await deleteFileCloudinary(mediaDelete.publicId, mediaDelete.type);
-            console.log("Delete media response:", deleteMediaResponse);
+        if (appFileDelete)
+        {
+            const deleteFileResponse = await deleteFileFromDrive(appFileDelete.googleDriveFileId);
+            if (!deleteFileResponse.success) {
+                return res.status(500).json({ success: false, message: "Failed to delete app file from Google Drive" });
+            }
         }
 
-        const appDelete = await App.findByIdAndDelete(appId);
-        const userData = await User.findByIdAndUpdate(userId, { $pull: { apps: appId } }, { new: true });
+        // Delete app icon from Cloudinary
+        const appIconDelete = await Media.findByIdAndDelete({_id: appExist.appIcon._id});
+        if(appIconDelete )
+        {
+            const deleteIconResponse = await deleteFileCloudinary(appIconDelete.publicId, appIconDelete.type);
+            console.log("This is deleteIconResponse: ", deleteIconResponse);
+        }
 
-        appDelete.providedBy = userData;
+        // Delete associated media files from Cloudinary
+        for (let item of appExist.media) {
+            const mediaDelete = await Media.findByIdAndDelete(item);
+            if (mediaDelete)
+            {
+                const deleteMediaResponse = await deleteFileCloudinary(mediaDelete.publicId, mediaDelete.type);
+                console.log("This is deleteMediaResponse: ", deleteMediaResponse);
+                if (!deleteMediaResponse.result === 'ok') {
+                    return res.status(500).json({ success: false, message: "Failed to delete app media from Cloudinary" });
+                }
+            }
+        }
+
+        // Delete the app from the database
+        const appDelete = await App.findByIdAndDelete(appId);
+
+        // Pull the appId from the user's apps array
+        const deleteFromUser = await User.findByIdAndUpdate(userId, { $pull: { apps: appId } }, { new: true });
+
+        // Update the app's `providedBy` field (if necessary)
+        appDelete.providedBy = deleteFromUser._id;
 
         return res.status(200).json({ success: true, message: "App deleted successfully", data: appDelete });
     }
@@ -155,7 +171,8 @@ exports.deleteApp = async (req, res) => {
         console.log("Error in deleting App: ", error);
         return res.status(500).json({ success: false, message: error.message, additionalInfo: "Error in deleting App" });
     }
-}
+};
+
 
 exports.updateApp = async (req, res) => {
     try {
@@ -233,6 +250,7 @@ exports.updateApp = async (req, res) => {
 exports.getAllApp = async (req, res) => {
     try {
         const allApps = await App.find({}).populate('category').populate('appIcon').populate('media');
+        console.log("This is allApps: ", allApps);
 
         return res.status(200).json({ success: true, message: "App fetched successfully", data: allApps });
     }

@@ -13,6 +13,7 @@ const AppDownload = () => {
   const user = useSelector((state) => state.auth.userData);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  console.log(app);
 
 
   const details = app ? [

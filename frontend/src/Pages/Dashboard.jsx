@@ -19,7 +19,7 @@ const Dashboard = () => {
                                 Welcome, <span className="font-semibold">{userData?.name}</span>
                             </p>
                             <p className="mt-2 text-lg">
-                                You have <span className="font-semibold">{userData?.appProvided?.length || 0}</span> apps
+                                You Provided <span className="font-semibold">{userData?.appProvided?.length || 0}</span> apps
                             </p>
                             <p className="mt-2 text-lg">
                                 Your Email: <span className="font-semibold">{userData?.email}</span>
@@ -28,7 +28,7 @@ const Dashboard = () => {
 
                         <div className="mt-6">
                             <img
-                                src={userData?.profilePicture}
+                                src={userData?.profilePicture?.url || `https://api.dicebear.com/5.x/initials/svg?seed=${userData?.name}`}
                                 className="w-32 h-32 rounded-full border-4 border-blue-600 shadow-lg transition-transform transform hover:scale-110"
                                 alt={userData?.name}
                             />

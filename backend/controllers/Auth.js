@@ -130,7 +130,6 @@ exports.signUp = async (req, res) => {
             name,
             email,
             password: hashedPassword,
-            profilePicture: `https://api.dicebear.com/5.x/initials/svg?seed=${name}`,
             phoneNumber, // Optionally include phoneNumber if provided
         });
 
@@ -164,7 +163,7 @@ exports.login = async (req, res) => {
             });
         }
 
-        const userExist = await User.findOne({ email });
+        const userExist = await User.findOne({ email }).populate("profilePicture");
         if (!userExist) {
             console.log("User not found");
             return res.status(400).json({
@@ -212,7 +211,6 @@ exports.login = async (req, res) => {
         });
     }
 }
-
 
 exports.resetPasswordToken = async (req, res) => {
     try {
@@ -349,6 +347,7 @@ exports.updateUser = async (req, res) => {
         // Destructure fields from req.body and files
         const { name, phoneNumber, address, publicId } = req.body;
         const profilePicture = req.files?.profilePicture;
+        console.log("This is req.files = ", req.files);
 
         const updateData = {};
 
@@ -358,9 +357,9 @@ exports.updateUser = async (req, res) => {
         if (address) updateData.address = address;
 
         // If no profile picture is provided, keep the current one
-        if (!profilePicture) {
-            updateData.profilePicture = userExist.profilePicture;
-        }
+        // if (!profilePicture) {
+        //     updateData.profilePicture = userExist.profilePicture;
+        // }
 
         // If no data to update (excluding profile picture), return an error
         if (Object.keys(updateData).length === 0 && !profilePicture) {
@@ -373,44 +372,49 @@ exports.updateUser = async (req, res) => {
         let response;
         
         // Handle profile picture upload
+
+        console.log("Eder toh paka aya");
         if (profilePicture) {
             console.log("Yaba toh paka aya hun");
             if (!publicId) {
                 // If no publicId is provided, upload a new profile picture
                 response = await uploadToCloudinary(profilePicture);  // Assuming uploadToCloudinary handles file upload
+                console.log("Without publicid => ", response);
                 // Create a new media record for the uploaded image
-                const media = new Media({
+                const media = await Media.create({
                     url: response.secure_url,
                     publicId: response.public_id,
-                    type: 'image'  // Assuming it's always an image. Modify if necessary for other media types
+                    type: response?.resource_type?.split("/")[0],  // Assuming it's always an image. Modify if necessary for other media types
                 });
-                await media.save();  // Save media to the database
 
                 // Add the new profile picture data to the update
-                updateData.profilePicture = response.secure_url;
-                updateData.publicId = response.public_id;
+                updateData.profilePicture = media._id;
             } else {
                 // If publicId exists, update the existing profile picture
-                response = await updateFileCloudinary(profilePicture, publicId);  // Assuming updateFileCloudinary updates existing media
+                    console.log("with publicid");
+                response = await updateFileCloudinary(profilePicture, publicId)
                 console.log("Yaa aya hun " ,response);
-                updateData.profilePicture = response.secure_url;
-                updateData.publicId = response.public_id;
+                // updateData.profilePicture = response.secure_url;
+                // updateData.publicId = response.public_id;
+                const updateMedia = await Media.findOneAndUpdate({ publicId: publicId }, { url: response.secure_url, publicId: response.public_id, type: response?.resource_type?.split("/")[0] }, { new: true });
             }
         }
 
 
         // Update the user's document in the database with the new data
+        console.log("This is update user = ", updateData);
         const updatedUser = await User.findOneAndUpdate(
             { _id: userId },
             { ...userExist.toObject(), ...updateData, profilePicture: updateData.profilePicture },  // Merge the existing data with the updated fields
             { new: true }
-        );
+        ).populate("profilePicture");
         console.log("Updated user: ", updatedUser);
 
         return res.status(200).json({
             success: true,
             message: "User updated successfully",
-            data: updatedUser
+            data: updatedUser,
+            additionalInfo: updateData
         });
 
     } catch (error) {

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 
 const Card = ({ app }) => {
     const navigate = useNavigate();
+    console.log("This is app in card: ", app);
     return (
 
         <div 
