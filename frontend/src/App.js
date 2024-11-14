@@ -1,7 +1,7 @@
 // src/App.js
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { AddApp, ForgotPassword, Home, Login, NotFound, OTP, ResetPassword, Signup } from './Pages';
+import { AddApp, Dashboard, ForgotPassword, Home, Login, NotFound, OTP, ResetPassword, Signup, UpdateUserForm } from './Pages';
 import { AppDownload, Navbar, ProtectedRoute } from './components';
 import { Toaster } from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
@@ -34,6 +34,22 @@ const App = () => {
                     element={
                         <ProtectedRoute>
                             <AppDownload />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/dashboard"
+                    element={
+                        <ProtectedRoute>
+                            <Dashboard />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/update-user"
+                    element={
+                        <ProtectedRoute>
+                            <UpdateUserForm />
                         </ProtectedRoute>
                     }
                 />

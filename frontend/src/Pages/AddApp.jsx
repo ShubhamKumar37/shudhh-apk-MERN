@@ -14,6 +14,7 @@ const AppForm = () => {
     const [categories, setCategories] = useState([]);
     const { GET_ALL_CATEGORIES } = categoryApi;
     const userData = useSelector((state) => state.auth.userData);
+    console.log("This is userData:---------------- ", userData);
     const { register, handleSubmit, control, formState: { errors } } = useForm();
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -94,7 +95,6 @@ const AppForm = () => {
             <Input label="App Name" name="appName" register={register} required placeholder="Enter App Name" errors={errors} />
             <Input label="App Description" name="appDescription" register={register} required placeholder="Enter App Description" errors={errors} />
             <Input label="Company Name" name="companyName" register={register} placeholder="Enter Company Name" errors={errors} />
-            <Input label="Category" name="category" register={register} placeholder="Enter Category" errors={errors} />
             <Input label="Size" name="size" register={register} placeholder="Enter Size" errors={errors} />
             <Input label="Download Count" name="download" type="number" register={register} placeholder="Enter Download Count" errors={errors} />
             <Input label="Release Date" name="releaseDate" register={register} placeholder="Enter Release Date" errors={errors} />

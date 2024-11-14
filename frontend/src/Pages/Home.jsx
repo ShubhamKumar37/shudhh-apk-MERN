@@ -12,7 +12,6 @@ const Home = () => {
 
   // State to track loading status
   const [isLoading, setIsLoading] = useState(true);
-  console.log("This is app data = ", appData);
 
   useEffect(() => {
     console.log("Fetching app data...");

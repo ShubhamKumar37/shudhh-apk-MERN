@@ -2,7 +2,7 @@
 const cloudinary = require("cloudinary").v2;
 
 // Upload file to Cloudinary
-exports.uploadToCloudinary = async (file, folder, quality, height) => {
+exports.uploadToCloudinary = async (file, folder = "media", quality, height) => {
     try {
         console.log("Inside uploadToCloudinary function");
         const options = { folder, resource_type: "auto" };

@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { signUp, login, sendOTP, resetPassword, resetPasswordToken } = require("../controllers/Auth");
+const { signUp, login, sendOTP, resetPassword, resetPasswordToken, updateUser } = require("../controllers/Auth");
 const { auth } = require("../middleware/auth");
 const { uploadFile } = require("../controllers/Upload");
 // Assuming the resetPassword and resetPasswordToken controllers are not needed or available, they are removed
@@ -13,5 +13,6 @@ router.put("/update-photo", auth, uploadFile);
 
 router.put("/reset-password", resetPassword);
 router.put("/reset-password-token", resetPasswordToken);
+router.put("/update-user", auth, updateUser);
 
 module.exports = router;

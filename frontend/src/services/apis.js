@@ -24,5 +24,6 @@ export const userAuth = {
     SEND_OTP_USER: BASE_URL + "/auth/sendOTP",
     RESET_PASSWORD_USER: BASE_URL + "/auth/reset-password",
     RESET_PASSWORD_TOKEN_USER: BASE_URL + "/auth/reset-password-token",
+    UPDATE_USER: BASE_URL + "/auth/update-user",
 };
 

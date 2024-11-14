@@ -1,11 +1,13 @@
 const User = require("../models/User");
 const OTP = require("../models/OTP");
+const Media = require("../models/Media");
 const mailSender = require("../utils/mailSender");
 const { otpTemplate } = require("../template/otpTemplate");
 const { resetPasswordTemplate } = require('../template/resetPassword');
 const otpGenerater = require("otp-generator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { updateFileCloudinary, uploadToCloudinary } = require("../utils/cloudinaryWork");
 
 exports.sendOTP = async (req, res) => {
     try {
@@ -329,5 +331,94 @@ exports.resetPassword = async (req, res) => {
                 additionalInfo: "Error while resetting password (Auth.js)"
             }
         );
+    }
+}
+
+exports.updateUser = async (req, res) => {
+    try {
+        const userId = req.user.id;  // Assuming the userId is coming from the authenticated user's token
+        const userExist = await User.findById(userId);
+
+        if (!userExist) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+        // Destructure fields from req.body and files
+        const { name, phoneNumber, address, publicId } = req.body;
+        const profilePicture = req.files?.profilePicture;
+
+        const updateData = {};
+
+        // Only update fields if they are present
+        if (name) updateData.name = name;
+        if (phoneNumber) updateData.phoneNumber = phoneNumber;
+        if (address) updateData.address = address;
+
+        // If no profile picture is provided, keep the current one
+        if (!profilePicture) {
+            updateData.profilePicture = userExist.profilePicture;
+        }
+
+        // If no data to update (excluding profile picture), return an error
+        if (Object.keys(updateData).length === 0 && !profilePicture) {
+            return res.status(400).json({
+                success: false,
+                message: "No data to update"
+            });
+        }
+
+        let response;
+        
+        // Handle profile picture upload
+        if (profilePicture) {
+            console.log("Yaba toh paka aya hun");
+            if (!publicId) {
+                // If no publicId is provided, upload a new profile picture
+                response = await uploadToCloudinary(profilePicture);  // Assuming uploadToCloudinary handles file upload
+                // Create a new media record for the uploaded image
+                const media = new Media({
+                    url: response.secure_url,
+                    publicId: response.public_id,
+                    type: 'image'  // Assuming it's always an image. Modify if necessary for other media types
+                });
+                await media.save();  // Save media to the database
+
+                // Add the new profile picture data to the update
+                updateData.profilePicture = response.secure_url;
+                updateData.publicId = response.public_id;
+            } else {
+                // If publicId exists, update the existing profile picture
+                response = await updateFileCloudinary(profilePicture, publicId);  // Assuming updateFileCloudinary updates existing media
+                console.log("Yaa aya hun " ,response);
+                updateData.profilePicture = response.secure_url;
+                updateData.publicId = response.public_id;
+            }
+        }
+
+
+        // Update the user's document in the database with the new data
+        const updatedUser = await User.findOneAndUpdate(
+            { _id: userId },
+            { ...userExist.toObject(), ...updateData, profilePicture: updateData.profilePicture },  // Merge the existing data with the updated fields
+            { new: true }
+        );
+        console.log("Updated user: ", updatedUser);
+
+        return res.status(200).json({
+            success: true,
+            message: "User updated successfully",
+            data: updatedUser
+        });
+
+    } catch (error) {
+        console.log("Error in updating user: ", error);
+        return res.status(500).json({
+            success: false,
+            message: error.message,
+            additionalInfo: "Error in updating user"
+        });
     }
 }

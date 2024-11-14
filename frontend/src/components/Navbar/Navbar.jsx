@@ -8,6 +8,7 @@ const Navbar = () => {
 
     const token = useSelector((state) => state.auth.token) || JSON.parse(localStorage.getItem("token"));
     const userData = useSelector((state) => state.auth.userData) || JSON.parse(localStorage.getItem("userData"));
+    console.log("This is user data", userData);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
