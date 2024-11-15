@@ -65,7 +65,7 @@ const UpdateUserForm = () => {
             toast.success("Profile updated successfully");
             dispatch(setUserData(response.data.data));
             localStorage.setItem("userData", JSON.stringify(response.data.data));
-            // navigate("/");
+            navigate("/");
 
 
         }

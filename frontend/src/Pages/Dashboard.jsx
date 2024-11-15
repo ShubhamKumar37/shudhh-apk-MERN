@@ -9,7 +9,7 @@ const Dashboard = () => {
 
     return (
         <div className="bg-white min-h-screen flex items-center justify-center py-12 px-4">
-            <div className="w-[40rem] p-[2rem] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center  ">
+            <div className="w-[50rem] p-[2rem] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center  ">
                 <div className="bg-white w-[90%] p-8 rounded-2xl shadow-lg lg:w-1/2 lg:flex lg:flex-col lg:items-center lg:justify-center">
                     <div className="flex flex-col items-center space-y-6">
                         <h2 className="text-3xl font-extrabold text-center">Dashboard</h2>
