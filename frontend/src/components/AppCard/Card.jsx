@@ -5,7 +5,6 @@ const Card = ({ app }) => {
     const navigate = useNavigate();
     console.log("This is app in card: ", app);
     return (
-
         <div 
             key={app._id} 
             className="cursor-pointer p-6 border-b border-gray-300 hover:bg-gray-50 transition duration-200 ease-in-out" 
@@ -14,7 +13,7 @@ const Card = ({ app }) => {
             <div className="flex items-start space-x-5">
                 {/* App Icon */}
                 <img 
-                    src={app.appIcon.url} 
+                    src={app?.appIcon?.url} 
                     alt={app.appName} 
                     className="w-20 h-20 rounded-lg object-cover shadow-lg" 
                 />

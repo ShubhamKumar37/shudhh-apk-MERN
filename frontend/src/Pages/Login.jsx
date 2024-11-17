@@ -27,10 +27,7 @@ const Login = () => {
                 <button type="submit" className="w-full bg-blue-600 text-white p-3 rounded-lg mt-4 hover:bg-blue-700 transition duration-200">
                     Login
                 </button>
-
-                <Link to="/forgot-password" className="text-blue-600 text-center block mt-4 hover:underline">
-                    Forgot Password?
-                </Link>
+                <Link to="/forgot-password" className="text-blue-600 text-center block mt-4 hover:underline">Forgot Password? </Link>
             </form>
         </div>
 

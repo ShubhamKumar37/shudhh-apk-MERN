@@ -71,7 +71,6 @@ const resetPasswordTemplate = (resetLink) => {
     <body>
         <div class="container">
             <div class="header">
-                <a href="https://shudhhApk100.com"><img src="https://i.ibb.co/7Xyj3PC/logo.png" alt="shudhhApk100 Logo"></a>
             </div>
             <div class="message">Password Reset Request</div>
             <div class="body">

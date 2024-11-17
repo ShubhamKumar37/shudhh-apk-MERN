@@ -33,8 +33,8 @@ cloudinaryConnection();
 app.use(express.json());
 app.use(CookieParser());
 app.use(cors({
-  origin: 'http://localhost:3000', // Your frontend URL
-  credentials: true, // Enable 
+  origin: 'http://localhost:3000', // Frontend URL
+  credentials: true, // Enable for cookies
 }));  
 app.use(fileUpload({
   useTempFiles: true,

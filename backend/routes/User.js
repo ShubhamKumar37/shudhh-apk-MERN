@@ -3,7 +3,6 @@ const router = express.Router();
 const { signUp, login, sendOTP, resetPassword, resetPasswordToken, updateUser } = require("../controllers/Auth");
 const { auth } = require("../middleware/auth");
 const { uploadFile } = require("../controllers/Upload");
-// Assuming the resetPassword and resetPasswordToken controllers are not needed or available, they are removed
 
 // For login and signup the account
 router.post("/signup", signUp);
